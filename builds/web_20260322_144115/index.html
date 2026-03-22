@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freddie Trading Empire — Status</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .empire-badge {
+    display: inline-block;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #58a6ff;
+    margin-bottom: 18px;
+  }
+
+  .header h1 {
+    font-size: clamp(22px, 5vw, 32px);
+    font-weight: 700;
+    color: #e6edf3;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .header p {
+    color: #8b949e;
+    font-size: 14px;
+  }
+
+  .status-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 28px 28px;
+    margin-bottom: 16px;
+  }
+
+  .status-card:hover {
+    border-color: #58a6ff44;
+    transition: border-color 0.2s ease;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #8b949e;
+    font-weight: 600;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #0d2a1a;
+    border: 1px solid #238636;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: #3fb950;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #3fb950;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .asset-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .asset-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #9945ff, #14f195);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: -1px;
+  }
+
+  .asset-info h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #e6edf3;
+    letter-spacing: -0.3px;
+  }
+
+  .asset-info span {
+    font-size: 13px;
+    color: #8b949e;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #21262d;
+    margin: 20px 0;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 420px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+  }
+
+  .metric {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8b949e;
+    margin-bottom: 6px;
+  }
+
+  .metric-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #58a6ff;
+  }
+
+  .metric-value.green { color: #3fb950; }
+  .metric-value.yellow { color: #d29922; }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .info-row:last-child { border-bottom: none; }
+
+  .info-label { color: #8b949e; }
+  .info-value { color: #e6edf3; font-weight: 500; }
+  .info-value.accent { color: #58a6ff; }
+
+  .mode-banner {
+    background: linear-gradient(135deg, #161b22, #0d1b2e);
+    border: 1px solid #1f4a8a;
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .mode-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .mode-text h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #58a6ff;
+    margin-bottom: 3px;
+  }
+
+  .mode-text p {
+    font-size: 12px;
+    color: #8b949e;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+  }
+
+  .timestamp {
+    font-size: 12px;
+    color: #484f58;
+    font-family: monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .timestamp span {
+    color: #8b949e;
+  }
+
+  .empire-tag {
+    font-size: 11px;
+    color: #484f58;
+    margin-top: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="empire-badge">⚡ Freddie Trading Empire</div>
+    <h1>Empire Status Dashboard</h1>
+    <p>Real-time monitoring — Paper Trading Phase</p>
+  </div>
+
+  <div class="mode-banner">
+    <div class="mode-icon">📋</div>
+    <div class="mode-text">
+      <h3>DRY RUN — Paper Trading Active</h3>
+      <p>No real capital at risk. Proving 60%+ win rate before Level 2 deployment.</p>
+    </div>
+  </div>
+
+  <div class="status-card">
+    <div class="card-header">
+      <span class="card-title">Asset Under Surveillance</span>
+      <span class="status-pill">
+        <span class="status-dot"></span>
+        MONITORING
+      </span>
+    </div>
+
+    <div class="asset-row">
+      <div class="asset-icon">◎</div>
+      <div class="asset-info">
+        <h2>Solana — SOL</h2>
+        <span>SOL/USD · Cryptocurrency · Layer 1</span>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="metrics-grid">
+      <div class="metric">
+        <div class="metric-label">Win Rate</div>
+        <div class="metric-value yellow">50%</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Target Rate</div>
+        <div class="metric-value">60%+</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Paper Bankroll</div>
+        <div class="metric-value green">$97.10</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Empire Balance</div>
+        <div class="metric-value accent">$50.47</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-card">
+    <div class="card-header">
+      <span class="card-title">Trade Log Summary</span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">Trades Closed</span>
+      <span class="info-value">2 confirmed</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Last Trade</span>
+      <span class="info-value green">Trade #002 · +$0.10 NET</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Open Positions</span>
+      <span class="info-value">None</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Next Trade Requirement</span>
+      <span class="info-value accent">SCOUT brief + Guardian approval</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Level 2 Unlock Condition</span>
+      <span class="info-value">60%+ win rate · 2 week proven streak</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Real Capital Staged</span>
+      <span class="info-value green">$100 ready</span>
+    </div>
+  </div>
+
+  <div class="status-card">
+    <div class="card-header">
+      <span class="card-title">Active Agents</span>
+      <span class="status-pill">
+        <span class="status-dot"></span>
+        ALL SYSTEMS GO
+      </span>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">HERALD</span>
+      <span class="info-value accent">Auto-briefing · LIVE</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">SCOUT</span>
+      <span class="info-value accent">External intelligence · LIVE</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">GUARDIAN</span>
+      <span class="info-value accent">14-step scan · LIVE</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">SENTINEL</span>
+      <span class="info-value accent">Health monitor · LIVE</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">FORGE</span>
+      <span class="info-value accent">Builder agent · LIVE</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">TRADE CHAIN</span>
+      <span class="info-value accent">v1.5 · Mode B signal active</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p class="timestamp">Generated: <span id="ts">—</span></p>
+    <p class="empire-tag">Freddie Trading Academy · Built by FORGE</p>
+  </div>
+
+</div>
+
+<script>
+  (function() {
+    var now = new Date();
+    var pad = function(n) { return n < 10 ? '0' + n : n; };
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var str = months[now.getMonth()] + ' ' + pad(now.getDate()) + ', ' + now.getFullYear()
+            + ' — ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds())
+            + ' (local)';
+    document.getElementById('ts').textContent = str;
+  })();
+</script>
+
+</body>
+</html>
