@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freddie Trading Empire — Status</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .logo-ring {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 2px solid #58a6ff;
+    background: rgba(88, 166, 255, 0.08);
+    margin-bottom: 20px;
+  }
+
+  .logo-ring svg {
+    width: 36px;
+    height: 36px;
+    stroke: #58a6ff;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .empire-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #e6edf3;
+  }
+
+  .empire-sub {
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin-top: 6px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .status-banner {
+    background: rgba(88, 166, 255, 0.06);
+    border: 1px solid rgba(88, 166, 255, 0.25);
+    border-radius: 12px;
+    padding: 28px 32px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(46, 160, 67, 0.15);
+    border: 1px solid rgba(46, 160, 67, 0.4);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #3fb950;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3fb950;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.75); }
+  }
+
+  .banner-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #e6edf3;
+    margin-bottom: 10px;
+  }
+
+  .banner-desc {
+    font-size: 0.95rem;
+    color: #8b949e;
+    line-height: 1.6;
+  }
+
+  .banner-desc span {
+    color: #58a6ff;
+    font-weight: 600;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+
+  .card-label {
+    font-size: 0.72rem;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  .card-value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #e6edf3;
+  }
+
+  .card-value.accent { color: #58a6ff; }
+  .card-value.green  { color: #3fb950; }
+  .card-value.yellow { color: #d29922; }
+
+  .card-note {
+    font-size: 0.75rem;
+    color: #6e7681;
+    margin-top: 6px;
+  }
+
+  .asset-row {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .asset-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #9945ff, #14f195);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .asset-info { flex: 1; min-width: 140px; }
+
+  .asset-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #e6edf3;
+  }
+
+  .asset-full {
+    font-size: 0.8rem;
+    color: #8b949e;
+    margin-top: 2px;
+  }
+
+  .asset-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: #3fb950;
+    font-weight: 600;
+  }
+
+  .monitor-bar {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin-bottom: 28px;
+  }
+
+  .monitor-bar-title {
+    font-size: 0.75rem;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  .steps {
+    display: flex;
+    gap: 0;
+    align-items: center;
+  }
+
+  .step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+  }
+
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    right: -50%;
+    width: 100%;
+    height: 2px;
+    background: #30363d;
+    z-index: 0;
+  }
+
+  .step.done:not(:last-child)::after {
+    background: #58a6ff;
+  }
+
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #30363d;
+    background: #0d1117;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #6e7681;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step.done .step-dot {
+    border-color: #58a6ff;
+    background: rgba(88, 166, 255, 0.15);
+    color: #58a6ff;
+  }
+
+  .step.active .step-dot {
+    border-color: #3fb950;
+    background: rgba(63, 185, 80, 0.15);
+    color: #3fb950;
+    box-shadow: 0 0 0 4px rgba(63, 185, 80, 0.12);
+  }
+
+  .step-label {
+    font-size: 0.65rem;
+    color: #6e7681;
+    margin-top: 8px;
+    display: block;
+  }
+
+  .step.done .step-label  { color: #58a6ff; }
+  .step.active .step-label { color: #3fb950; }
+
+  .footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #484f58;
+    border-top: 1px solid #21262d;
+    padding-top: 20px;
+  }
+
+  .footer span { color: #6e7681; }
+
+  @media (max-width: 480px) {
+    .empire-name { font-size: 1.4rem; }
+    .banner-title { font-size: 1.15rem; }
+    .step-label { font-size: 0.58rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="logo-ring">
+      <svg viewBox="0 0 24 24">
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+        <polyline points="16 7 22 7 22 13"></polyline>
+      </svg>
+    </div>
+    <div class="empire-name">Freddie Trading Empire</div>
+    <div class="empire-sub">Autonomous Intelligence Platform</div>
+  </div>
+
+  <div class="status-banner">
+    <div class="status-badge">
+      <div class="pulse-dot"></div>
+      Systems Operational
+    </div>
+    <div class="banner-title">Active Monitoring Engaged</div>
+    <div class="banner-desc">
+      The empire is currently monitoring <span>SOL / USD</span> in real time.<br>
+      All agents are active. Paper trading mode enforced.
+    </div>
+  </div>
+
+  <div class="asset-row">
+    <div class="asset-icon">◎</div>
+    <div class="asset-info">
+      <div class="asset-name">SOL</div>
+      <div class="asset-full">Solana — Primary Watch Asset</div>
+    </div>
+    <div class="asset-status">
+      <div class="pulse-dot"></div>
+      MONITORING ACTIVE
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Trading Mode</div>
+      <div class="card-value yellow">DRY RUN</div>
+      <div class="card-note">Paper trading — no real orders</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Paper Bankroll</div>
+      <div class="card-value accent">$97.10</div>
+      <div class="card-note">Active capital tracked</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Win Rate</div>
+      <div class="card-value green">50%</div>
+      <div class="card-note">Target: 60%+ over 2 weeks</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Open Positions</div>
+      <div class="card-value">0</div>
+      <div class="card-note">Awaiting next SCOUT brief</div>
+    </div>
+  </div>
+
+  <div class="monitor-bar">
+    <div class="monitor-bar-title">Trade Pipeline — Current Phase</div>
+    <div class="steps">
+      <div class="step done">
+        <div class="step-dot">✓</div>
+        <span class="step-label">SANDBOX</span>
+      </div>
+      <div class="step active">
+        <div class="step-dot">●</div>
+        <span class="step-label">PAPER</span>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <span class="step-label">LIVE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Page generated: <span id="ts"></span></p>
+    <p style="margin-top:6px;">FORGE v1.0 &mdash; Empire Build System &mdash; All systems nominal</p>
+  </div>
+
+</div>
+
+<script>
+  (function() {
+    var d = new Date();
+    var pad = function(n) { return n < 10 ? '0' + n : n; };
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var str = d.getFullYear() + '-' + months[d.getMonth()] + '-' + pad(d.getDate()) +
+              ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) +
+              ' (local)';
+    document.getElementById('ts').textContent = str;
+  })();
+</script>
+
+</body>
+</html>
