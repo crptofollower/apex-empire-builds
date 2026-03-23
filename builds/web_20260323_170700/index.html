@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freddie Trading Empire — Status</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .empire-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #161b22, #1c2330);
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 8px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #58a6ff;
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-size: clamp(22px, 5vw, 36px);
+    font-weight: 700;
+    color: #e6edf3;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .header h1 span {
+    color: #58a6ff;
+  }
+
+  .header p {
+    font-size: 14px;
+    color: #8b949e;
+    letter-spacing: 0.3px;
+  }
+
+  .status-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .status-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .status-card-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #c9d1d9;
+    letter-spacing: 0.2px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .pill.active {
+    background: rgba(35, 134, 54, 0.15);
+    border: 1px solid rgba(35, 134, 54, 0.4);
+    color: #3fb950;
+  }
+
+  .pill.paper {
+    background: rgba(88, 166, 255, 0.1);
+    border: 1px solid rgba(88, 166, 255, 0.3);
+    color: #58a6ff;
+  }
+
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #3fb950;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  .asset-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 1px solid #21262d;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .asset-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .asset-row:first-child {
+    padding-top: 0;
+  }
+
+  .asset-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .asset-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #9945ff, #14f195);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: -0.5px;
+  }
+
+  .asset-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #e6edf3;
+  }
+
+  .asset-sub {
+    font-size: 12px;
+    color: #8b949e;
+    margin-top: 2px;
+  }
+
+  .asset-status {
+    text-align: right;
+  }
+
+  .monitoring-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #58a6ff;
+    margin-bottom: 3px;
+  }
+
+  .monitoring-sub {
+    font-size: 11px;
+    color: #6e7681;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 480px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  .metric-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: #6e7681;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #e6edf3;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .metric-value.accent { color: #58a6ff; }
+  .metric-value.green { color: #3fb950; }
+  .metric-value.yellow { color: #d29922; }
+
+  .metric-sub {
+    font-size: 12px;
+    color: #8b949e;
+  }
+
+  .divider {
+    height: 1px;
+    background: #21262d;
+    margin: 4px 0 20px 0;
+  }
+
+  .system-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #21262d;
+    font-size: 13px;
+  }
+
+  .system-row:last-child { border-bottom: none; }
+
+  .system-label {
+    color: #8b949e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .system-label::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3fb950;
+    flex-shrink: 0;
+  }
+
+  .system-label.yellow::before { background: #d29922; }
+  .system-label.blue::before { background: #58a6ff; }
+
+  .system-value {
+    color: #c9d1d9;
+    font-weight: 500;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+  }
+
+  .timestamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 12px;
+    color: #6e7681;
+    font-family: 'Courier New', monospace;
+  }
+
+  .timestamp-icon {
+    color: #58a6ff;
+    font-size: 13px;
+  }
+
+  .footer-note {
+    margin-top: 14px;
+    font-size: 11px;
+    color: #484f58;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="empire-badge">⚡ Freddie Trading Empire</div>
+    <h1>Empire <span>Status</span> Dashboard</h1>
+    <p>Real-time monitoring — Paper Trading Phase Active</p>
+  </div>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <h2>Active Monitoring</h2>
+      <span class="pill active"><span class="pulse-dot"></span> Live</span>
+    </div>
+
+    <div class="asset-row">
+      <div class="asset-info">
+        <div class="asset-icon">SOL</div>
+        <div>
+          <div class="asset-name">Solana</div>
+          <div class="asset-sub">SOL/USD · Spot</div>
+        </div>
+      </div>
+      <div class="asset-status">
+        <div class="monitoring-label">Under Watch</div>
+        <div class="monitoring-sub">Price Alerts Armed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+
+    <div class="metric-card">
+      <div class="metric-label">Trading Mode</div>
+      <div class="metric-value accent">DRY RUN</div>
+      <div class="metric-sub">Paper trading only</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Win Rate</div>
+      <div class="metric-value yellow">50%</div>
+      <div class="metric-sub">Target: 60%+ over 2 weeks</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Paper Bankroll</div>
+      <div class="metric-value green">$97.10</div>
+      <div class="metric-sub">Active paper balance</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Empire Balance</div>
+      <div class="metric-value accent">$50.47</div>
+      <div class="metric-sub">Tracked in ledger.json</div>
+    </div>
+
+  </div>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <h2>Agent Systems</h2>
+      <span class="pill paper">Paper Phase</span>
+    </div>
+
+    <div class="system-row">
+      <span class="system-label">SCOUT</span>
+      <span class="system-value">External Intelligence — Live</span>
+    </div>
+    <div class="system-row">
+      <span class="system-label">GUARDIAN</span>
+      <span class="system-value">14-Step Scan — Active</span>
+    </div>
+    <div class="system-row">
+      <span class="system-label">SENTINEL</span>
+      <span class="system-value">Health Monitor v1.1 — Running</span>
+    </div>
+    <div class="system-row">
+      <span class="system-label">HERALD</span>
+      <span class="system-value">Auto-Briefing — Live</span>
+    </div>
+    <div class="system-row">
+      <span class="system-label blue">FORGE</span>
+      <span class="system-value">Builder Agent — Active</span>
+    </div>
+    <div class="system-row">
+      <span class="system-label yellow">LEGAL SENTINEL</span>
+      <span class="system-value">API Terms Review — Pending</span>
+    </div>
+  </div>
+
+  <div class="status-card">
+    <div class="status-card-header">
+      <h2>Trade Log Summary</h2>
+    </div>
+
+    <div class="system-row">
+      <span class="system-label">Trade #002</span>
+      <span class="system-value" style="color:#3fb950;">Closed +$0.10 NET</span>
+    </div>
+    <div class="system-row">
+      <span class="system-label">Trade #003</span>
+      <span class="system-value" style="color:#8b949e;">Chain Test — Excluded</span>
+    </div>
+    <div class="system-row">
+      <span class="system-label blue">Open Positions</span>
+      <span class="system-value">None — Awaiting SCOUT Brief</span>
+    </div>
+    <div class="system-row">
+      <span class="system-label blue">Level 2 Unlock</span>
+      <span class="system-value">60%+ win rate required</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="timestamp">
+      <span class="timestamp-icon">⏱</span>
+      <span id="ts">Generating...</span>
+    </div>
+    <div class="footer-note">APEX EMPIRE CONSTITUTION v4.0 · Sandbox protocol enforced · No live trades without explicit approval</div>
+  </div>
+
+</div>
+
+<script>
+  (function() {
+    var now = new Date();
+    var pad = function(n) { return n < 10 ? '0' + n : n; };
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    var str = days[now.getDay()] + ' ' +
+              pad(now.getDate()) + ' ' +
+              months[now.getMonth()] + ' ' +
+              now.getFullYear() + '  ' +
+              pad(now.getHours()) + ':' +
+              pad(now.getMinutes()) + ':' +
+              pad(now.getSeconds()) + ' ' +
+              'UTC' + (now.getTimezoneOffset() <= 0 ? '+' : '-') +
+              pad(Math.abs(Math.floor(now.getTimezoneOffset() / 60)));
+    document.getElementById('ts').textContent = 'Generated: ' + str;
+  })();
+</script>
+
+</body>
+</html>
