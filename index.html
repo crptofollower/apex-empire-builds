@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herald — The AI That Knows You</title>
+<meta name="description" content="Voice-first AI that remembers your life and helps before you ask. Join the early access list.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #08080e;
+    --bg2: #0f0f1a;
+    --amber: #e8a020;
+    --amber-dim: #a06a0a;
+    --amber-glow: rgba(232, 160, 32, 0.12);
+    --text: #f0ede8;
+    --text-muted: rgba(240, 237, 232, 0.45);
+    --text-dim: rgba(240, 237, 232, 0.22);
+    --border: rgba(240, 237, 232, 0.08);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ── Ambient background ── */
+  .ambient {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .ambient::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, rgba(232,160,32,0.07) 0%, transparent 70%);
+    animation: breathe 8s ease-in-out infinite;
+  }
+  .ambient::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, rgba(60, 80, 180, 0.05) 0%, transparent 70%);
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+  }
+
+  /* ── Layout ── */
+  main {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem 2rem;
+    text-align: center;
+  }
+
+  /* ── Logo / Wordmark ── */
+  .wordmark {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.2s forwards;
+  }
+  .wordmark-herald {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .wordmark-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--amber);
+    margin-bottom: 2px;
+  }
+
+  /* ── Pulse ── */
+  .pulse-wrap {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 3.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.4s forwards;
+  }
+  .pulse-core {
+    position: absolute;
+    inset: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--amber);
+    animation: pulseCore 4s ease-in-out infinite;
+  }
+  .pulse-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--amber);
+    opacity: 0;
+    animation: pulseRing 4s ease-out infinite;
+  }
+  .pulse-ring:nth-child(2) { animation-delay: 1.3s; }
+  .pulse-ring:nth-child(3) { animation-delay: 2.6s; }
+  @keyframes pulseCore {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(232,160,32,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(232,160,32,0); }
+  }
+  @keyframes pulseRing {
+    0% { transform: scale(0.2); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+
+  /* ── Headline ── */
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(3.2rem, 8vw, 6.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  /* ── Subline ── */
+  .subline {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto 3rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.8s forwards;
+  }
+
+  /* ── Pillars ── */
+  .pillars {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1s forwards;
+  }
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .pillar-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.25rem;
+  }
+  .pillar-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--amber);
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .pillar-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  /* ── Form ── */
+  .form-wrap {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.2s forwards;
+  }
+  .form-label {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-weight: 400;
+  }
+  .input-row {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    background: rgba(255,255,255,0.02);
+  }
+  .input-row:focus-within {
+    border-color: rgba(232, 160, 32, 0.4);
+  }
+  .email-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0.9rem 1.1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+  .email-input::placeholder { color: var(--text-dim); }
+  .submit-btn {
+    background: var(--amber);
+    border: none;
+    padding: 0.9rem 1.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #08080e;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+    white-space: nowrap;
+  }
+  .submit-btn:hover { background: #f0aa28; }
+  .submit-btn:active { opacity: 0.85; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .success-msg {
+    display: none;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--amber);
+    letter-spacing: 0.05em;
+    font-weight: 300;
+  }
+  .success-msg.show { display: block; }
+  .error-msg {
+    display: none;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: rgba(240, 100, 80, 0.8);
+  }
+  .error-msg.show { display: block; }
+
+  /* ── Footer ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  footer a, footer span {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    font-weight: 300;
+    transition: color 0.2s;
+  }
+  footer a:hover { color: var(--text-muted); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 600px) {
+    main { padding: 3rem 1.5rem 1.5rem; }
+    .pillars { gap: 1.75rem; }
+    .input-row { flex-direction: column; border-radius: 2px; }
+    .submit-btn { width: 100%; padding: 0.9rem; text-align: center; }
+    footer { gap: 1.25rem; flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient"></div>
+
+<main>
+
+  <div class="wordmark">
+    <span class="wordmark-herald">Herald</span>
+    <div class="wordmark-dot"></div>
+  </div>
+
+  <div class="pulse-wrap" aria-hidden="true">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-core"></div>
+  </div>
+
+  <h1>The AI that<br><em>knows you.</em></h1>
+
+  <p class="subline">
+    Voice-first. Remembers your life.<br>
+    Helps before you ask.
+  </p>
+
+  <div class="pillars" aria-label="Key features">
+    <div class="pillar">
+      <div class="pillar-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8"/>
+        </svg>
+      </div>
+      <span class="pillar-label">Just talk</span>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/>
+        </svg>
+      </div>
+      <span class="pillar-label">Remembers</span>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 8a6 6 0 0 1-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1 1 18 8z"/>
+          <circle cx="12" cy="8" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <span class="pillar-label">Finds you</span>
+    </div>
+  </div>
+
+  <div class="form-wrap">
+    <label class="form-label" for="email-input">Be among the first to try Herald</label>
+    <div class="input-row">
+      <input
+        class="email-input"
+        id="email-input"
+        type="email"
+        placeholder="your@email.com"
+        autocomplete="email"
+        autocapitalize="off"
+        spellcheck="false"
+      />
+      <button class="submit-btn" id="submit-btn" type="button">Get access</button>
+    </div>
+    <p class="success-msg" id="success-msg" role="status">
+      You're on the list. We'll be in touch.
+    </p>
+    <p class="error-msg" id="error-msg" role="alert"></p>
+  </div>
+
+</main>
+
+<footer>
+  <span>© 2026 Apex Empire AI</span>
+  <a href="/privacy">Privacy Policy</a>
+  <a href="mailto:herald@apexempire.ai">Contact</a>
+</footer>
+
+<script>
+  const btn = document.getElementById('submit-btn');
+  const input = document.getElementById('email-input');
+  const successMsg = document.getElementById('success-msg');
+  const errorMsg = document.getElementById('error-msg');
+
+  function isValidEmail(e) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+  }
+
+  async function handleSubmit() {
+    const email = input.value.trim();
+    errorMsg.classList.remove('show');
+
+    if (!email) {
+      errorMsg.textContent = 'Please enter your email address.';
+      errorMsg.classList.add('show');
+      input.focus();
+      return;
+    }
+    if (!isValidEmail(email)) {
+      errorMsg.textContent = 'Please enter a valid email address.';
+      errorMsg.classList.add('show');
+      input.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Joining...';
+
+    try {
+      const res = await fetch('https://web-production-b4083.up.railway.app/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      if (res.ok) {
+        input.style.display = 'none';
+        btn.style.display = 'none';
+        successMsg.classList.add('show');
+      } else {
+        throw new Error('server');
+      }
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Get access';
+      errorMsg.textContent = 'Something went wrong. Try again or email herald@apexempire.ai';
+      errorMsg.classList.add('show');
+    }
+  }
+
+  btn.addEventListener('click', handleSubmit);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') handleSubmit(); });
+</script>
+
+</body>
+</html>
