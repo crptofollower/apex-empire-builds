@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herald · Command</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg:        #0a0a0a;
+    --bg2:       #111111;
+    --bg3:       #1a1a1a;
+    --border:    #2a2a2a;
+    --gold:      #c9a84c;
+    --gold2:     #e8c97a;
+    --text:      #e0e0e0;
+    --muted:     #666;
+    --green:     #4caf7d;
+    --red:       #e05c5c;
+    --blue:      #5c9be0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    min-height: 100vh;
+  }
+
+  /* ── AUTH SCREEN ── */
+  #auth-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .auth-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 40px 48px;
+    width: 360px;
+  }
+
+  .auth-logo {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .auth-box input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 10px 14px;
+    outline: none;
+    margin-bottom: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .auth-box input:focus { border-color: var(--gold); }
+
+  .auth-box button {
+    width: 100%;
+    background: var(--gold);
+    border: none;
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 11px;
+    cursor: pointer;
+  }
+
+  .auth-box button:hover { background: var(--gold2); }
+  .auth-error { color: var(--red); font-size: 11px; margin-top: 8px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── MAIN LAYOUT ── */
+  #app { display: none; }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-left {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    display: inline-block;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .status-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .refresh-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+  }
+
+  .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1px;
+    background: var(--border);
+    min-height: calc(100vh - 48px);
+  }
+
+  .panel {
+    background: var(--bg);
+    padding: 20px 24px;
+    overflow: auto;
+  }
+
+  .panel-full { grid-column: 1 / -1; }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .panel-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ── STAT CARDS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-bottom: 1px;
+  }
+
+  .stat-card {
+    background: var(--bg2);
+    padding: 16px 20px;
+  }
+
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── USER TABLE ── */
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .user-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .user-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #161616;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    vertical-align: middle;
+  }
+
+  .user-table tr:hover td { background: var(--bg2); cursor: pointer; }
+
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .badge-beta  { background: #1a2a1a; color: var(--green); border: 1px solid #2a4a2a; }
+  .badge-owner { background: #2a200a; color: var(--gold);  border: 1px solid #4a3a1a; }
+
+  .humor-bar {
+    display: inline-block;
+    height: 4px;
+    background: var(--border);
+    width: 60px;
+    vertical-align: middle;
+    position: relative;
+  }
+
+  .humor-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--gold);
+  }
+
+  /* ── USER DETAIL PANEL ── */
+  #detail-panel {
+    display: none;
+    position: fixed;
+    top: 48px; right: 0; bottom: 0;
+    width: 480px;
+    background: var(--bg2);
+    border-left: 1px solid var(--border);
+    z-index: 200;
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  .detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .detail-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gold);
+  }
+
+  .detail-ai-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .close-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    width: 28px; height: 28px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .close-btn:hover { border-color: var(--red); color: var(--red); }
+
+  .detail-section {
+    margin-bottom: 20px;
+  }
+
+  .detail-section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid #161616;
+  }
+
+  .detail-row-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .detail-row-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text);
+    text-align: right;
+    max-width: 260px;
+    word-break: break-word;
+  }
+
+  .memory-list {
+    list-style: none;
+  }
+
+  .memory-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text);
+    padding: 4px 0;
+    border-bottom: 1px solid #161616;
+    line-height: 1.5;
+  }
+
+  .memory-item::before {
+    content: '→ ';
+    color: var(--gold);
+  }
+
+  /* ── MANUAL PROACTIVE ── */
+  .proactive-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .proactive-form input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 7px 10px;
+    outline: none;
+  }
+
+  .proactive-form input:focus { border-color: var(--gold); }
+
+  .proactive-form button {
+    background: var(--gold);
+    border: none;
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 7px 14px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  .proactive-form button:hover { background: var(--gold2); }
+
+  /* ── WAITLIST TABLE ── */
+  .waitlist-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .waitlist-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .waitlist-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #161616;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+
+  .export-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+  }
+
+  .export-btn:hover { border-color: var(--green); color: var(--green); }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg2);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 10px 20px;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .loading {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 20px 0;
+    letter-spacing: 0.1em;
+  }
+
+  .empty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    padding: 12px 0;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">Herald · Command</div>
+    <input type="password" id="auth-input" placeholder="access code" autocomplete="off">
+    <button onclick="authenticate()">Enter</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">Herald · Command</div>
+    <div class="topbar-right">
+      <span class="status-text"><span class="status-dot"></span><span id="status-label">connecting...</span></span>
+      <button class="refresh-btn" onclick="loadDashboard()">↺ Refresh</button>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Total Users</div>
+      <div class="stat-value" id="stat-users">—</div>
+      <div class="stat-sub">active profiles</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Waitlist</div>
+      <div class="stat-value" id="stat-waitlist">—</div>
+      <div class="stat-sub">emails captured</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Proactive Queued</div>
+      <div class="stat-value" id="stat-proactive">—</div>
+      <div class="stat-sub">pending messages</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Backend</div>
+      <div class="stat-value" id="stat-version" style="font-size:16px;margin-top:4px;">—</div>
+      <div class="stat-sub" id="stat-time">—</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- USER LIST -->
+    <div class="panel panel-full" style="max-height:380px;overflow:auto;">
+      <div class="panel-header">
+        <div class="panel-title">Users</div>
+        <div class="panel-count" id="user-count">—</div>
+      </div>
+      <div id="user-table-wrap">
+        <div class="loading">Loading users...</div>
+      </div>
+    </div>
+
+    <!-- WAITLIST -->
+    <div class="panel" style="max-height:400px;overflow:auto;">
+      <div class="panel-header">
+        <div class="panel-title">Waitlist</div>
+        <button class="export-btn" onclick="exportWaitlist()">↓ CSV</button>
+      </div>
+      <div id="waitlist-wrap">
+        <div class="loading">Loading waitlist...</div>
+      </div>
+    </div>
+
+    <!-- SYSTEM INFO -->
+    <div class="panel" style="max-height:400px;overflow:auto;">
+      <div class="panel-header">
+        <div class="panel-title">System</div>
+      </div>
+      <div id="system-wrap">
+        <div class="loading">Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- USER DETAIL PANEL -->
+<div id="detail-panel">
+  <div class="detail-header">
+    <div>
+      <div class="detail-name" id="detail-name">—</div>
+      <div class="detail-ai-name" id="detail-ai-name">—</div>
+    </div>
+    <button class="close-btn" onclick="closeDetail()">×</button>
+  </div>
+  <div id="detail-content"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'https://web-production-b4083.up.railway.app';
+let SECRET = '';
+let dashData = null;
+let waitlistData = null;
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+
+document.getElementById('auth-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') authenticate();
+});
+
+async function authenticate() {
+  const code = document.getElementById('auth-input').value.trim();
+  if (!code) return;
+  try {
+    const res = await fetch(`${API}/admin/dashboard?secret=${encodeURIComponent(code)}`);
+    if (res.status === 403) {
+      document.getElementById('auth-error').textContent = 'invalid code';
+      return;
+    }
+    SECRET = code;
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadDashboard();
+    loadWaitlist();
+  } catch (e) {
+    document.getElementById('auth-error').textContent = 'could not reach server';
+  }
+}
+
+// ── LOAD DASHBOARD ────────────────────────────────────────────────────────────
+
+async function loadDashboard() {
+  document.getElementById('status-label').textContent = 'refreshing...';
+  try {
+    const res = await fetch(`${API}/admin/dashboard?secret=${encodeURIComponent(SECRET)}`);
+    dashData = await res.json();
+
+    // Stats
+    document.getElementById('stat-users').textContent = dashData.user_count;
+    document.getElementById('stat-waitlist').textContent = dashData.waitlist_count;
+    document.getElementById('stat-proactive').textContent = dashData.total_proactive_queued;
+    document.getElementById('stat-version').textContent = 'v' + dashData.version;
+    document.getElementById('stat-time').textContent = dashData.server_time?.slice(11,19) + ' UTC';
+    document.getElementById('user-count').textContent = dashData.user_count + ' profiles';
+    document.getElementById('status-label').textContent = 'v' + dashData.version + ' · live';
+
+    renderUserTable(dashData.users);
+    renderSystem(dashData);
+  } catch (e) {
+    document.getElementById('status-label').textContent = 'error';
+    document.getElementById('user-table-wrap').innerHTML = '<div class="empty">Could not reach Railway backend.</div>';
+  }
+}
+
+function renderUserTable(users) {
+  if (!users || users.length === 0) {
+    document.getElementById('user-table-wrap').innerHTML = '<div class="empty">No users yet.</div>';
+    return;
+  }
+  let html = `<table class="user-table">
+    <thead><tr>
+      <th>Name</th><th>AI Name</th><th>City</th>
+      <th>Messages</th><th>Memories</th>
+      <th>Personality</th><th>Humor</th><th>Type</th>
+    </tr></thead><tbody>`;
+  for (const u of users) {
+    const badge = u.is_owner
+      ? '<span class="badge badge-owner">owner</span>'
+      : u.is_beta ? '<span class="badge badge-beta">beta</span>' : '';
+    const humorPct = Math.round((u.humor_weight || 0) * 100);
+    const humorBar = `<div class="humor-bar"><div class="humor-fill" style="width:${humorPct}%"></div></div> ${humorPct}%`;
+    html += `<tr onclick="loadUserDetail('${u.user_id}')">
+      <td>${u.name || '<span style="color:var(--muted)">unknown</span>'} ${badge}</td>
+      <td style="color:var(--gold)">${u.ai_name || '—'}</td>
+      <td style="color:var(--muted)">${u.confirmed_city || '—'}</td>
+      <td>${u.msg_count}</td>
+      <td>${u.memory_count}</td>
+      <td style="color:var(--muted)">${u.personality_samples} samples · ${u.comm_style}</td>
+      <td>${humorBar}</td>
+      <td style="color:var(--muted)">${u.user_id.slice(0,12)}...</td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  document.getElementById('user-table-wrap').innerHTML = html;
+}
+
+function renderSystem(data) {
+  const html = `
+    <div class="detail-section">
+      <div class="detail-row"><span class="detail-row-label">Version</span><span class="detail-row-value" style="color:var(--green)">v${data.version}</span></div>
+      <div class="detail-row"><span class="detail-row-label">Users</span><span class="detail-row-value">${data.user_count}</span></div>
+      <div class="detail-row"><span class="detail-row-label">Waitlist</span><span class="detail-row-value">${data.waitlist_count}</span></div>
+      <div class="detail-row"><span class="detail-row-label">Cache entries</span><span class="detail-row-value">${data.cache_entries}</span></div>
+      <div class="detail-row"><span class="detail-row-label">Proactive queued</span><span class="detail-row-value">${data.total_proactive_queued}</span></div>
+      <div class="detail-row"><span class="detail-row-label">Server time</span><span class="detail-row-value" style="color:var(--muted)">${data.server_time?.slice(0,19)}</span></div>
+    </div>
+    <div class="detail-section" style="margin-top:16px;">
+      <div class="detail-section-title">Railway URL</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);word-break:break-all;">
+        web-production-b4083.up.railway.app
+      </div>
+    </div>`;
+  document.getElementById('system-wrap').innerHTML = html;
+}
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+
+async function loadWaitlist() {
+  try {
+    const res = await fetch(`${API}/admin/waitlist?secret=${encodeURIComponent(SECRET)}`);
+    waitlistData = await res.json();
+    renderWaitlist(waitlistData.entries || []);
+  } catch (e) {
+    document.getElementById('waitlist-wrap').innerHTML = '<div class="empty">Could not load waitlist.</div>';
+  }
+}
+
+function renderWaitlist(entries) {
+  if (!entries.length) {
+    document.getElementById('waitlist-wrap').innerHTML = '<div class="empty">No waitlist entries yet.</div>';
+    return;
+  }
+  let html = `<table class="waitlist-table">
+    <thead><tr><th>#</th><th>Email</th><th>Source</th><th>Date</th></tr></thead><tbody>`;
+  entries.forEach((e, i) => {
+    html += `<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td>${e.email}</td>
+      <td style="color:var(--muted)">${e.source || 'landing'}</td>
+      <td style="color:var(--muted)">${e.created_at?.slice(0,10) || '—'}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('waitlist-wrap').innerHTML = html;
+}
+
+function exportWaitlist() {
+  if (!waitlistData?.entries?.length) { showToast('No waitlist data'); return; }
+  const csv = ['id,email,source,created_at',
+    ...waitlistData.entries.map(e => `${e.id},${e.email},${e.source},${e.created_at}`)
+  ].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `herald-waitlist-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('Exported');
+}
+
+// ── USER DETAIL ───────────────────────────────────────────────────────────────
+
+async function loadUserDetail(userId) {
+  document.getElementById('detail-panel').style.display = 'block';
+  document.getElementById('detail-name').textContent = '...';
+  document.getElementById('detail-ai-name').textContent = userId;
+  document.getElementById('detail-content').innerHTML = '<div class="loading">Loading profile...</div>';
+
+  try {
+    const res = await fetch(`${API}/admin/user/${userId}?secret=${encodeURIComponent(SECRET)}`);
+    const u = await res.json();
+
+    document.getElementById('detail-name').textContent = u.name || 'Unknown';
+    document.getElementById('detail-ai-name').textContent = `AI: ${u.ai_name} · ${u.confirmed_city || 'location unknown'}`;
+
+    const pp = u.personality_profile || {};
+    const humorPct = Math.round((pp.humor_weight || 0) * 100);
+
+    let html = '';
+
+    // Core stats
+    html += `<div class="detail-section">
+      <div class="detail-section-title">Profile</div>
+      <div class="detail-row"><span class="detail-row-label">Messages</span><span class="detail-row-value">${u.msg_count}</span></div>
+      <div class="detail-row"><span class="detail-row-label">Trust level</span><span class="detail-row-value">${u.trust_level}</span></div>
+      <div class="detail-row"><span class="detail-row-label">Member since</span><span class="detail-row-value" style="color:var(--muted)">${u.created_at?.slice(0,10) || '—'}</span></div>
+      <div class="detail-row"><span class="detail-row-label">User ID</span><span class="detail-row-value" style="color:var(--muted);font-size:9px">${u.user_id}</span></div>
+    </div>`;
+
+    // Personality
+    if (pp.samples > 0) {
+      html += `<div class="detail-section">
+        <div class="detail-section-title">Personality (${pp.samples} samples)</div>
+        <div class="detail-row"><span class="detail-row-label">Comm style</span><span class="detail-row-value" style="color:var(--gold)">${pp.comm_style || '—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Register</span><span class="detail-row-value">${pp.register || '—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Humor weight</span><span class="detail-row-value">${humorPct}% ${pp.humor_type || ''}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Avg words/msg</span><span class="detail-row-value">${pp.avg_word_count || '—'}</span></div>
+        ${pp.earned_phrases?.length ? `<div class="detail-row"><span class="detail-row-label">Phrases</span><span class="detail-row-value" style="color:var(--gold)">${pp.earned_phrases.join(', ')}</span></div>` : ''}
+      </div>`;
+    }
+
+    // Memories
+    const allMemory = [...(u.memories || []), ...(u.learned_facts || []).map(f => `${f.value} (${f.category})`)];
+    if (allMemory.length) {
+      html += `<div class="detail-section">
+        <div class="detail-section-title">Memory (${allMemory.length})</div>
+        <ul class="memory-list">
+          ${allMemory.slice(-15).map(m => `<li class="memory-item">${typeof m === 'string' ? m : JSON.stringify(m)}</li>`).join('')}
+        </ul>
+      </div>`;
+    }
+
+    // Life tracker
+    if (u.life_tracker?.length) {
+      html += `<div class="detail-section">
+        <div class="detail-section-title">Life Tracker</div>
+        ${u.life_tracker.map(t => `
+          <div class="detail-row">
+            <span class="detail-row-label">${t.category}</span>
+            <span class="detail-row-value">${t.item} · due ${t.due || '—'}</span>
+          </div>`).join('')}
+      </div>`;
+    }
+
+    // Proactive queue
+    if (u.proactive_queue?.length) {
+      html += `<div class="detail-section">
+        <div class="detail-section-title">Proactive Queue (${u.proactive_queue.length})</div>
+        ${u.proactive_queue.map(q => `
+          <div class="detail-row">
+            <span class="detail-row-label" style="font-size:9px">${q.type}</span>
+            <span class="detail-row-value">${q.text?.slice(0,60)}${q.text?.length > 60 ? '...' : ''}</span>
+          </div>`).join('')}
+      </div>`;
+    }
+
+    // Manual proactive
+    html += `<div class="detail-section">
+      <div class="detail-section-title">Send Manual Message</div>
+      <div class="proactive-form">
+        <input type="text" id="proactive-input-${u.user_id}" placeholder="Type a message for ${u.ai_name}...">
+        <button onclick="sendProactive('${u.user_id}')">Send</button>
+      </div>
+    </div>`;
+
+    document.getElementById('detail-content').innerHTML = html;
+
+  } catch (e) {
+    document.getElementById('detail-content').innerHTML = '<div class="empty">Failed to load user.</div>';
+  }
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').style.display = 'none';
+}
+
+async function sendProactive(userId) {
+  const input = document.getElementById(`proactive-input-${userId}`);
+  const msg = input.value.trim();
+  if (!msg) return;
+  try {
+    const res = await fetch(`${API}/admin/proactive`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret: SECRET, user_id: userId, message: msg })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      input.value = '';
+      showToast('Message queued');
+    } else {
+      showToast('Failed: ' + data.error);
+    }
+  } catch (e) {
+    showToast('Network error');
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2500);
+}
+
+// ── CLOSE DETAIL ON OUTSIDE CLICK ────────────────────────────────────────────
+document.addEventListener('click', e => {
+  const panel = document.getElementById('detail-panel');
+  if (panel.style.display === 'block' && !panel.contains(e.target) && !e.target.closest('tr')) {
+    closeDetail();
+  }
+});
+</script>
+</body>
+</html>
