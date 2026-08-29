@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Herald — The AI That Knows You</title>
-<meta name="description" content="Voice-first AI that remembers your life and helps before you ask. Join the early access list.">
+<title>Herald — The AI that knows you</title>
+<meta name="description" content="Herald is a Personal AI you talk to. It remembers what matters, and it stays with you. Early access.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -15,16 +15,17 @@
     --bg: #08080e;
     --bg2: #0f0f1a;
     --amber: #e8a020;
-    --amber-dim: #a06a0a;
-    --amber-glow: rgba(232, 160, 32, 0.12);
-    --text: #f0ede8;
-    --text-muted: rgba(240, 237, 232, 0.45);
-    --text-dim: rgba(240, 237, 232, 0.22);
-    --border: rgba(240, 237, 232, 0.08);
+    --amber-soft: rgba(232, 160, 32, 0.16);
+    --text: #f3f0ea;
+    --text-muted: rgba(243, 240, 234, 0.88);
+    --text-dim: rgba(243, 240, 234, 0.72);
+    --border: rgba(243, 240, 234, 0.16);
+    --max: 40rem;
   }
 
+  html { scroll-behavior: smooth; }
+
   html, body {
-    height: 100%;
     background: var(--bg);
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
@@ -33,13 +34,22 @@
     overflow-x: hidden;
   }
 
-  body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
+  body { min-height: 100vh; }
 
-  /* ── Ambient background ── */
+  .skip {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 20;
+    background: var(--amber);
+    color: #14110a;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .skip:focus { top: 1rem; }
+
   .ambient {
     position: fixed;
     inset: 0;
@@ -50,78 +60,76 @@
   .ambient::before {
     content: '';
     position: absolute;
-    top: -20%;
+    top: -18%;
     left: 50%;
     transform: translateX(-50%);
     width: 900px;
     height: 600px;
-    background: radial-gradient(ellipse at center, rgba(232,160,32,0.07) 0%, transparent 70%);
+    background: radial-gradient(ellipse at center, rgba(232,160,32,0.08) 0%, transparent 70%);
     animation: breathe 8s ease-in-out infinite;
   }
   .ambient::after {
     content: '';
     position: absolute;
-    bottom: -10%;
-    right: -20%;
-    width: 600px;
-    height: 600px;
+    bottom: -12%;
+    right: -18%;
+    width: 560px;
+    height: 560px;
     background: radial-gradient(ellipse at center, rgba(60, 80, 180, 0.05) 0%, transparent 70%);
   }
   @keyframes breathe {
-    0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+    0%, 100% { opacity: 0.65; transform: translateX(-50%) scale(1); }
     50% { opacity: 1; transform: translateX(-50%) scale(1.08); }
   }
 
-  /* ── Layout ── */
-  main {
-    position: relative;
-    z-index: 1;
-    flex: 1;
+  .page { position: relative; z-index: 1; }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 88vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 2rem 2rem;
     text-align: center;
+    padding: 4.5rem 1.5rem 3rem;
   }
 
-  /* ── Logo / Wordmark ── */
   .wordmark {
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
-    margin-bottom: 5rem;
+    margin-bottom: 2.6rem;
     opacity: 0;
-    animation: fadeUp 1s ease 0.2s forwards;
+    animation: fadeUp 1s ease 0.15s forwards;
   }
   .wordmark-herald {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    font-size: 1rem;
+    font-size: 0.95rem;
     letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--text-dim);
+    font-weight: 400;
   }
   .wordmark-dot {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: var(--amber);
     margin-bottom: 2px;
   }
 
-  /* ── Pulse ── */
   .pulse-wrap {
     position: relative;
     width: 72px;
     height: 72px;
-    margin: 0 auto 3.5rem;
+    margin: 0 auto 2.75rem;
     opacity: 0;
-    animation: fadeUp 1s ease 0.4s forwards;
+    animation: fadeUp 1s ease 0.3s forwards;
   }
   .pulse-core {
     position: absolute;
-    inset: 50%;
+    left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%);
     width: 14px;
     height: 14px;
@@ -144,334 +152,419 @@
     50% { box-shadow: 0 0 0 8px rgba(232,160,32,0); }
   }
   @keyframes pulseRing {
-    0% { transform: scale(0.2); opacity: 0.6; }
+    0% { transform: scale(0.2); opacity: 0.55; }
     100% { transform: scale(1); opacity: 0; }
   }
 
-  /* ── Headline ── */
   h1 {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 300;
-    font-size: clamp(3.2rem, 8vw, 6.5rem);
+    font-size: clamp(3rem, 8vw, 6.2rem);
     line-height: 1.05;
     letter-spacing: -0.01em;
-    color: var(--text);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.35rem;
     opacity: 0;
-    animation: fadeUp 1s ease 0.6s forwards;
+    animation: fadeUp 1s ease 0.45s forwards;
   }
   h1 em {
     font-style: italic;
     color: var(--amber);
   }
 
-  /* ── Subline ── */
-  .subline {
-    font-size: 1.05rem;
-    font-weight: 300;
+  .lede {
+    font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+    line-height: 1.55;
     color: var(--text-muted);
-    letter-spacing: 0.02em;
-    line-height: 1.7;
-    max-width: 480px;
-    margin: 0 auto 3rem;
+    max-width: 28rem;
+    margin: 0 auto 2.75rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+
+  .hero-form {
+    width: 100%;
+    max-width: 26.5rem;
     opacity: 0;
     animation: fadeUp 1s ease 0.8s forwards;
   }
 
-  /* ── Pillars ── */
-  .pillars {
-    display: flex;
-    gap: 2.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 4rem;
-    opacity: 0;
-    animation: fadeUp 1s ease 1s forwards;
+  /* ── Reading column ── */
+  .story {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
   }
-  .pillar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
+
+  section.block {
+    padding: 4.25rem 0;
+    border-top: 1px solid var(--border);
   }
-  .pillar-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+
+  .block .eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 500;
+    margin-bottom: 1.1rem;
+  }
+
+  .block h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2rem, 5vw, 2.85rem);
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+  }
+
+  .block p {
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: var(--text-muted);
+    margin-bottom: 1.15rem;
+  }
+  .block p:last-child { margin-bottom: 0; }
+
+  .exchange {
+    margin: 2rem 0 0;
+    padding: 1.5rem 1.4rem;
+    background: rgba(255,255,255,0.02);
     border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.25rem;
+    border-left: 3px solid var(--amber);
   }
-  .pillar-icon svg {
-    width: 16px;
-    height: 16px;
-    stroke: var(--amber);
-    fill: none;
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  .exchange p {
+    font-size: 1.08rem;
+    margin-bottom: 1.2rem;
+    color: var(--text);
   }
-  .pillar-label {
+  .exchange p:last-child { margin-bottom: 0; }
+  .exchange .who {
+    display: block;
     font-size: 0.78rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-dim);
-    font-weight: 400;
+    color: var(--amber);
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+  }
+  .exchange .who.later { color: var(--text-dim); }
+
+
+  .demo-frame {
+    margin: 2rem auto 0;
+    max-width: 20.5rem;
+    width: min(100%, 20.5rem);
+    padding: 0.55rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+  }
+  .demo-frame video {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 68vh;
+    aspect-ratio: 464 / 688;
+    object-fit: contain;
+    background: #050508;
   }
 
-  /* ── Form ── */
-  .form-wrap {
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-    opacity: 0;
-    animation: fadeUp 1s ease 1.2s forwards;
+  .close-form {
+    margin-top: 2rem;
+    max-width: 26.5rem;
   }
+
+  .form-note {
+    margin-top: 0.8rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--text-dim);
+  }
+
+  .privacy-link {
+    color: var(--amber);
+    text-decoration: none;
+  }
+  .privacy-link:hover, .privacy-link:focus-visible { text-decoration: underline; }
+
+  /* ── Forms ── */
   .form-label {
     display: block;
-    font-size: 0.8rem;
-    letter-spacing: 0.1em;
+    font-size: 0.88rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
+    color: var(--text-dim);
+    margin-bottom: 0.85rem;
     font-weight: 400;
   }
   .input-row {
     display: flex;
-    gap: 0;
     border: 1px solid var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-    transition: border-color 0.3s;
-    background: rgba(255,255,255,0.02);
+    background: rgba(255,255,255,0.025);
+    transition: border-color 0.25s;
   }
-  .input-row:focus-within {
-    border-color: rgba(232, 160, 32, 0.4);
-  }
+  .input-row:focus-within { border-color: rgba(232, 160, 32, 0.55); }
   .email-input {
     flex: 1;
+    min-width: 0;
     background: transparent;
     border: none;
     outline: none;
-    padding: 0.9rem 1.1rem;
+    padding: 0.95rem 1.1rem;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     font-weight: 300;
     color: var(--text);
-    letter-spacing: 0.01em;
   }
-  .email-input::placeholder { color: var(--text-dim); }
+  .email-input::placeholder { color: rgba(243, 240, 234, 0.48); }
   .submit-btn {
     background: var(--amber);
     border: none;
-    padding: 0.9rem 1.4rem;
+    padding: 0.95rem 1.35rem;
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #08080e;
+    color: #14110a;
     cursor: pointer;
-    transition: background 0.2s, opacity 0.2s;
     white-space: nowrap;
   }
   .submit-btn:hover { background: #f0aa28; }
-  .submit-btn:active { opacity: 0.85; }
+  .submit-btn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .success-msg {
+  .success-msg, .error-msg {
     display: none;
-    margin-top: 1rem;
-    font-size: 0.85rem;
-    color: var(--amber);
-    letter-spacing: 0.05em;
-    font-weight: 300;
+    margin-top: 0.9rem;
+    font-size: 1rem;
+    line-height: 1.5;
   }
-  .success-msg.show { display: block; }
-  .error-msg {
-    display: none;
-    margin-top: 0.75rem;
-    font-size: 0.8rem;
-    color: rgba(240, 100, 80, 0.8);
-  }
-  .error-msg.show { display: block; }
+  .success-msg { color: var(--amber); }
+  .error-msg { color: #f0b4a6; }
+  .success-msg.show, .error-msg.show { display: block; }
 
-  /* ── Footer ── */
   footer {
-    position: relative;
-    z-index: 1;
-    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border);
+    padding: 1.6rem 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 2rem;
-    border-top: 1px solid var(--border);
+    gap: 1.75rem;
+    flex-wrap: wrap;
   }
   footer a, footer span {
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     color: var(--text-dim);
     text-decoration: none;
-    letter-spacing: 0.05em;
-    font-weight: 300;
-    transition: color 0.2s;
+    letter-spacing: 0.03em;
   }
-  footer a:hover { color: var(--text-muted); }
+  footer a:hover, footer a:focus-visible { color: var(--text); }
 
-  /* ── Animations ── */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── Mobile ── */
-  @media (max-width: 600px) {
-    main { padding: 3rem 1.5rem 1.5rem; }
-    .pillars { gap: 1.75rem; }
-    .input-row { flex-direction: column; border-radius: 2px; }
-    .submit-btn { width: 100%; padding: 0.9rem; text-align: center; }
-    footer { gap: 1.25rem; flex-wrap: wrap; justify-content: center; }
+  @media (max-width: 640px) {
+    .hero { padding: 4rem 1.25rem 2.5rem; min-height: auto; }
+    .wordmark { margin-bottom: 2.5rem; }
+    .story { padding: 1rem 1.25rem 3.5rem; }
+    section.block { padding: 3.1rem 0; }
+    .block p { font-size: 1.08rem; }
+    .input-row { flex-direction: column; }
+    .submit-btn { width: 100%; }
+    .email-input, .submit-btn { font-size: 16px; }
+    .exchange { padding: 1.25rem 1.1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    .wordmark, .pulse-wrap, h1, .lede, .hero-form { opacity: 1; }
   }
 </style>
 </head>
 <body>
-
+<a class="skip" href="#main">Skip to content</a>
 <div class="ambient"></div>
 
-<main>
+<div class="page">
+  <header class="hero">
+    <div class="wordmark">
+      <span class="wordmark-herald">Herald</span>
+      <div class="wordmark-dot"></div>
+    </div>
 
-  <div class="wordmark">
-    <span class="wordmark-herald">Herald</span>
-    <div class="wordmark-dot"></div>
-  </div>
+    <div class="pulse-wrap" aria-hidden="true">
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <div class="pulse-core"></div>
+    </div>
 
-  <div class="pulse-wrap" aria-hidden="true">
-    <div class="pulse-ring"></div>
-    <div class="pulse-ring"></div>
-    <div class="pulse-ring"></div>
-    <div class="pulse-core"></div>
-  </div>
+    <h1>The AI that<br><em>knows you.</em></h1>
+    <p class="lede">Herald is a Personal AI you talk to. It remembers what matters, and it stays with you.</p>
 
-  <h1>The AI that<br><em>knows you.</em></h1>
-
-  <p class="subline">
-    Voice-first. Remembers your life.<br>
-    Helps before you ask.
-  </p>
-
-  <div class="pillars" aria-label="Key features">
-    <div class="pillar">
-      <div class="pillar-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8"/>
-        </svg>
+    <form class="hero-form waitlist" data-waitlist novalidate>
+      <label class="form-label" for="email-hero">Early access. Join the invitation list.</label>
+      <div class="input-row">
+        <input class="email-input" id="email-hero" name="email" type="email" inputmode="email" placeholder="your@email.com" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+        <button class="submit-btn" type="submit">Get access</button>
       </div>
-      <span class="pillar-label">Just talk</span>
-    </div>
-    <div class="pillar">
-      <div class="pillar-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/>
-        </svg>
+      <p class="form-note">We use this email only to invite you. Joining does not send a confirmation message.</p>
+      <p class="success-msg" role="status">You’re on the invitation list.</p>
+      <p class="error-msg" role="alert"></p>
+    </form>
+  </header>
+
+  <main id="main" class="story">
+    <section class="block" aria-labelledby="scene-title">
+      <p class="eyebrow">The experience</p>
+      <h2 id="scene-title">You tell Herald something once.</h2>
+      <p>Days or weeks later, you can simply pick up the conversation again. You don’t have to explain yourself from the beginning.</p>
+      <div class="exchange">
+        <p><span class="who">You</span> I’m seeing Margaret on Thursday. She likes yellow tulips.</p>
+        <p><span class="who later">Later</span> What was I taking Margaret?</p>
+        <p><span class="who">Herald</span> Yellow tulips. You’re seeing her Thursday.</p>
       </div>
-      <span class="pillar-label">Remembers</span>
-    </div>
-    <div class="pillar">
-      <div class="pillar-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M18 8a6 6 0 0 1-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1 1 18 8z"/>
-          <circle cx="12" cy="8" r="1" fill="currentColor" stroke="none"/>
-        </svg>
+    </section>
+
+    <section class="block" aria-labelledby="demo-title">
+      <p class="eyebrow">Demo</p>
+      <h2 id="demo-title">See Herald in action</h2>
+      <p>A short concept demo of how Herald helps you pick up the conversation.</p>
+      <div class="demo-frame">
+        <video
+          controls
+          playsinline
+          preload="metadata"
+          width="464"
+          height="688"
+          aria-label="Concept demo of Herald helping you pick up a conversation"
+          src="Women%20-%20making%20dinner%20appoinment.mp4"
+        >
+          Your browser can’t play this video.
+        </video>
       </div>
-      <span class="pillar-label">Finds you</span>
-    </div>
-  </div>
+    </section>
 
-  <div class="form-wrap">
-    <label class="form-label" for="email-input">Be among the first to try Herald</label>
-    <div class="input-row">
-      <input
-        class="email-input"
-        id="email-input"
-        type="email"
-        placeholder="your@email.com"
-        autocomplete="email"
-        autocapitalize="off"
-        spellcheck="false"
-      />
-      <button class="submit-btn" id="submit-btn" type="button">Get access</button>
-    </div>
-    <p class="success-msg" id="success-msg" role="status">
-      You're on the list. We'll be in touch.
-    </p>
-    <p class="error-msg" id="error-msg" role="alert"></p>
-  </div>
+    <section class="block" aria-labelledby="talk-title">
+      <p class="eyebrow">Conversation</p>
+      <h2 id="talk-title">Just talk.</h2>
+      <p>Speak the way you already speak. There is nothing to memorize, and no special way of talking.</p>
+      <p>Ask Herald something. Tell it something. Keep going later. That’s all.</p>
+    </section>
 
-</main>
+    <section class="block" aria-labelledby="memory-title">
+      <p class="eyebrow">Memory</p>
+      <h2 id="memory-title">Herald remembers what you tell it.</h2>
+      <p>That can be people, appointments, things you need to do, how you like things, or other everyday details that matter to you.</p>
+      <p>You should not have to explain yourself all over again the next time you talk.</p>
+    </section>
 
-<footer>
-  <span>© 2026 Apex Empire AI</span>
-  <a href="/privacy">Privacy Policy</a>
-  <a href="mailto:herald@apexempire.ai">Contact</a>
-</footer>
+    <section class="block" aria-labelledby="privacy-title">
+      <p class="eyebrow">Privacy</p>
+      <h2 id="privacy-title">It stays on your device.</h2>
+      <p>What Herald remembers about your life stays on your device. It is not sold. It is not used for advertising.</p>
+      <p>If you ask Herald for something from the outside world, only what is needed for that request is used.</p>
+      <p><a class="privacy-link" href="/privacy">Read the privacy policy</a></p>
+    </section>
+
+    <section class="block" aria-labelledby="why-title">
+      <p class="eyebrow">Why this matters</p>
+      <h2 id="why-title">Less operating. More living.</h2>
+      <p>Too much technology asks you to keep up with it: another screen, another setting, another way of working. Herald is for people who would rather just talk, including anyone who is tired of managing a pile of apps.</p>
+      <p>You shouldn’t need to become technical to be remembered well.</p>
+    </section>
+
+    <section class="block" aria-labelledby="access-title">
+      <p class="eyebrow">Early access</p>
+      <h2 id="access-title">Herald is being built and tested now.</h2>
+      <p>Herald is in early access. If you submit your email, you are joining the invitation list. You are not signing up for a finished product or a set of promised features.</p>
+      <form class="close-form waitlist" data-waitlist novalidate>
+        <label class="form-label" for="email-close">Join the invitation list.</label>
+        <div class="input-row">
+          <input class="email-input" id="email-close" name="email" type="email" inputmode="email" placeholder="your@email.com" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+          <button class="submit-btn" type="submit">Get access</button>
+        </div>
+        <p class="form-note">We use this email only to invite you. Joining does not send a confirmation message.</p>
+        <p class="success-msg" role="status">You’re on the invitation list.</p>
+        <p class="error-msg" role="alert"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <span>© 2026 Apex Empire AI</span>
+    <a href="/privacy">Privacy</a>
+    <a href="mailto:herald@apexempire.ai">Contact</a>
+  </footer>
+</div>
 
 <script>
-  const btn = document.getElementById('submit-btn');
-  const input = document.getElementById('email-input');
-  const successMsg = document.getElementById('success-msg');
-  const errorMsg = document.getElementById('error-msg');
+  const WAITLIST_URL = 'https://web-production-b4083.up.railway.app/waitlist';
 
-  function isValidEmail(e) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+  function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
   }
 
-  async function handleSubmit() {
-    const email = input.value.trim();
-    errorMsg.classList.remove('show');
+  document.querySelectorAll('[data-waitlist]').forEach(function (form) {
+    const input = form.querySelector('input[type="email"]');
+    const btn = form.querySelector('button[type="submit"]');
+    const successMsg = form.querySelector('.success-msg');
+    const errorMsg = form.querySelector('.error-msg');
 
-    if (!email) {
-      errorMsg.textContent = 'Please enter your email address.';
-      errorMsg.classList.add('show');
-      input.focus();
-      return;
-    }
-    if (!isValidEmail(email)) {
-      errorMsg.textContent = 'Please enter a valid email address.';
-      errorMsg.classList.add('show');
-      input.focus();
-      return;
-    }
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      errorMsg.classList.remove('show');
+      errorMsg.textContent = '';
 
-    btn.disabled = true;
-    btn.textContent = 'Joining...';
-
-    try {
-      const res = await fetch('https://web-production-b4083.up.railway.app/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-
-      if (res.ok) {
-        input.style.display = 'none';
-        btn.style.display = 'none';
-        successMsg.classList.add('show');
-      } else {
-        throw new Error('server');
+      const email = input.value.trim();
+      if (!email) {
+        errorMsg.textContent = 'Please enter your email address.';
+        errorMsg.classList.add('show');
+        input.focus();
+        return;
       }
-    } catch {
-      btn.disabled = false;
-      btn.textContent = 'Get access';
-      errorMsg.textContent = 'Something went wrong. Try again or email herald@apexempire.ai';
-      errorMsg.classList.add('show');
-    }
-  }
+      if (!isValidEmail(email)) {
+        errorMsg.textContent = 'Please enter a valid email address.';
+        errorMsg.classList.add('show');
+        input.focus();
+        return;
+      }
 
-  btn.addEventListener('click', handleSubmit);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') handleSubmit(); });
+      btn.disabled = true;
+      const previous = btn.textContent;
+      btn.textContent = 'Joining...';
+
+      try {
+        const res = await fetch(WAITLIST_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email })
+        });
+
+        if (res.ok) {
+          input.style.display = 'none';
+          btn.style.display = 'none';
+          successMsg.classList.add('show');
+        } else {
+          throw new Error('server');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = previous;
+        errorMsg.textContent = 'Something went wrong. Try again, or email herald@apexempire.ai';
+        errorMsg.classList.add('show');
+      }
+    });
+  });
 </script>
-
 </body>
 </html>
