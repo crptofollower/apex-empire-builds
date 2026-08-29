@@ -84,6 +84,7 @@
 
   .page { position: relative; z-index: 1; }
 
+  /* ── Hero ── */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -187,6 +188,7 @@
     animation: fadeUp 1s ease 0.8s forwards;
   }
 
+  /* ── Reading column ── */
   .story {
     max-width: var(--max);
     margin: 0 auto;
@@ -247,11 +249,30 @@
   }
   .exchange .who.later { color: var(--text-dim); }
 
+
+  .demo-frame {
+    margin: 2rem auto 0;
+    max-width: 20.5rem;
+    width: min(100%, 20.5rem);
+    padding: 0.55rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+  }
+  .demo-frame video {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 68vh;
+    aspect-ratio: 464 / 688;
+    background: #050508;
+  }
+
   .close-form {
     margin-top: 2rem;
     max-width: 26.5rem;
   }
 
+  /* ── Forms ── */
   .form-label {
     display: block;
     font-size: 0.88rem;
@@ -395,6 +416,25 @@
         <p><span class="who">You</span> I’m seeing Margaret on Thursday. She likes yellow tulips.</p>
         <p><span class="who later">Later</span> What was I taking Margaret?</p>
         <p><span class="who">Herald</span> Yellow tulips. You’re seeing her Thursday.</p>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="demo-title">
+      <p class="eyebrow">Demo</p>
+      <h2 id="demo-title">See Herald in action</h2>
+      <p>A short concept demo of how Herald helps you pick up the conversation.</p>
+      <div class="demo-frame">
+        <video
+          controls
+          playsinline
+          muted
+          preload="metadata"
+          width="464"
+          height="688"
+          src="Women%20-%20making%20dinner%20appoinment.mp4"
+        >
+          Your browser can’t play this video.
+        </video>
       </div>
     </section>
 
