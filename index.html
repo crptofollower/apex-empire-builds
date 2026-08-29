@@ -17,9 +17,9 @@
     --amber: #e8a020;
     --amber-soft: rgba(232, 160, 32, 0.16);
     --text: #f3f0ea;
-    --text-muted: rgba(243, 240, 234, 0.82);
-    --text-dim: rgba(243, 240, 234, 0.62);
-    --border: rgba(243, 240, 234, 0.12);
+    --text-muted: rgba(243, 240, 234, 0.88);
+    --text-dim: rgba(243, 240, 234, 0.72);
+    --border: rgba(243, 240, 234, 0.16);
     --max: 40rem;
   }
 
@@ -42,7 +42,7 @@
     top: -4rem;
     z-index: 20;
     background: var(--amber);
-    color: #08080e;
+    color: #14110a;
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
     font-weight: 500;
@@ -86,20 +86,20 @@
 
   /* ── Hero ── */
   .hero {
-    min-height: 100vh;
+    min-height: 88vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 5rem 1.5rem 3.5rem;
+    padding: 4.5rem 1.5rem 3rem;
   }
 
   .wordmark {
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
-    margin-bottom: 3.5rem;
+    margin-bottom: 2.6rem;
     opacity: 0;
     animation: fadeUp 1s ease 0.15s forwards;
   }
@@ -264,6 +264,7 @@
     height: auto;
     max-height: 68vh;
     aspect-ratio: 464 / 688;
+    object-fit: contain;
     background: #050508;
   }
 
@@ -271,6 +272,19 @@
     margin-top: 2rem;
     max-width: 26.5rem;
   }
+
+  .form-note {
+    margin-top: 0.8rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--text-dim);
+  }
+
+  .privacy-link {
+    color: var(--amber);
+    text-decoration: none;
+  }
+  .privacy-link:hover, .privacy-link:focus-visible { text-decoration: underline; }
 
   /* ── Forms ── */
   .form-label {
@@ -301,7 +315,7 @@
     font-weight: 300;
     color: var(--text);
   }
-  .email-input::placeholder { color: rgba(243, 240, 234, 0.38); }
+  .email-input::placeholder { color: rgba(243, 240, 234, 0.48); }
   .submit-btn {
     background: var(--amber);
     border: none;
@@ -311,7 +325,7 @@
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #08080e;
+    color: #14110a;
     cursor: pointer;
     white-space: nowrap;
   }
@@ -329,7 +343,7 @@
     line-height: 1.5;
   }
   .success-msg { color: var(--amber); }
-  .error-msg { color: #e8a090; }
+  .error-msg { color: #f0b4a6; }
   .success-msg.show, .error-msg.show { display: block; }
 
   footer {
@@ -362,6 +376,7 @@
     .block p { font-size: 1.08rem; }
     .input-row { flex-direction: column; }
     .submit-btn { width: 100%; }
+    .email-input, .submit-btn { font-size: 16px; }
     .exchange { padding: 1.25rem 1.1rem; }
   }
 
@@ -397,12 +412,13 @@
     <p class="lede">Herald is a Personal AI you talk to. It remembers what matters, and it stays with you.</p>
 
     <form class="hero-form waitlist" data-waitlist novalidate>
-      <label class="form-label" for="email-hero">Early access. Herald is being built now.</label>
+      <label class="form-label" for="email-hero">Early access. Join the invitation list.</label>
       <div class="input-row">
-        <input class="email-input" id="email-hero" name="email" type="email" placeholder="your@email.com" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+        <input class="email-input" id="email-hero" name="email" type="email" inputmode="email" placeholder="your@email.com" autocomplete="email" autocapitalize="off" spellcheck="false" required>
         <button class="submit-btn" type="submit">Get access</button>
       </div>
-      <p class="success-msg" role="status">You’re on the list. We’ll be in touch.</p>
+      <p class="form-note">We use this email only to invite you. Joining does not send a confirmation message.</p>
+      <p class="success-msg" role="status">You’re on the invitation list.</p>
       <p class="error-msg" role="alert"></p>
     </form>
   </header>
@@ -431,6 +447,7 @@
           preload="metadata"
           width="464"
           height="688"
+          aria-label="Concept demo of Herald helping you pick up a conversation"
           src="Women%20-%20making%20dinner%20appoinment.mp4"
         >
           Your browser can’t play this video.
@@ -441,7 +458,7 @@
     <section class="block" aria-labelledby="talk-title">
       <p class="eyebrow">Conversation</p>
       <h2 id="talk-title">Talk. That’s the whole way in.</h2>
-      <p>You don’t learn commands, menus, or AI terms. You speak the way you already speak. Herald is meant to meet you there.</p>
+      <p>You don’t learn commands, menus, or AI terms. You speak the way you already speak. Herald meets you there.</p>
       <p>The conversation is the experience. Not a dashboard. Not a list of tools to figure out.</p>
     </section>
 
@@ -449,35 +466,36 @@
       <p class="eyebrow">Memory</p>
       <h2 id="memory-title">Memory is the product.</h2>
       <p>Herald is for the meaningful things about your life: the people, the promises, the preferences that make you who you are. So you are not starting over every time you speak.</p>
-      <p>What you share about your life should stay true, and stay yours. Other information in the world can help when you need it. It should not become the authority over your life.</p>
+      <p>What you share about your life stays yours. Information from the wider world can help when you ask for it. It does not become the authority over your life.</p>
     </section>
 
     <section class="block" aria-labelledby="privacy-title">
       <p class="eyebrow">Privacy</p>
       <h2 id="privacy-title">Personal memory belongs with you.</h2>
-      <p>The things you tell Herald about your life are meant to live on your device — not become a profile in the cloud, and not become advertising.</p>
-      <p>We do not sell your information. If you join early access, we keep only the email you give us so we can invite you. That list is separate from Herald’s personal memory.</p>
-      <p><a href="/privacy" style="color: var(--amber); text-decoration: none;">Read the privacy policy</a></p>
+      <p>Personal memory belongs on your device. It is not sold, and it is not used as an advertising profile.</p>
+      <p>If you join early access, we keep the email you give us so we can invite you. That list is separate from Herald’s personal memory.</p>
+      <p><a class="privacy-link" href="/privacy">Read the privacy policy</a></p>
     </section>
 
     <section class="block" aria-labelledby="why-title">
       <p class="eyebrow">Why this matters</p>
       <h2 id="why-title">Less operating. More living.</h2>
-      <p>Too much technology asks you to keep up with it: another screen, another setting, another way of working. Herald is being built for people who would rather just talk — including anyone who is tired of managing a pile of apps.</p>
+      <p>Too much technology asks you to keep up with it: another screen, another setting, another way of working. Herald is for people who would rather just talk, including anyone who is tired of managing a pile of apps.</p>
       <p>You shouldn’t need to become technical to be remembered well.</p>
     </section>
 
     <section class="block" aria-labelledby="access-title">
       <p class="eyebrow">Early access</p>
       <h2 id="access-title">Herald is being built and tested now.</h2>
-      <p>This is not a finished product. If you join the list, you are asking to be invited as we try it with people. You are not signing up for a full set of promised features.</p>
+      <p>Herald is in early access. If you submit your email, you are joining the invitation list. You are not signing up for a finished product or a set of promised features.</p>
       <form class="close-form waitlist" data-waitlist novalidate>
-        <label class="form-label" for="email-close">Leave your email if you’d like an invitation.</label>
+        <label class="form-label" for="email-close">Join the invitation list.</label>
         <div class="input-row">
-          <input class="email-input" id="email-close" name="email" type="email" placeholder="your@email.com" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+          <input class="email-input" id="email-close" name="email" type="email" inputmode="email" placeholder="your@email.com" autocomplete="email" autocapitalize="off" spellcheck="false" required>
           <button class="submit-btn" type="submit">Get access</button>
         </div>
-        <p class="success-msg" role="status">You’re on the list. We’ll be in touch.</p>
+        <p class="form-note">We use this email only to invite you. Joining does not send a confirmation message.</p>
+        <p class="success-msg" role="status">You’re on the invitation list.</p>
         <p class="error-msg" role="alert"></p>
       </form>
     </section>
