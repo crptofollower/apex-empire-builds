@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy Policy — Herald</title>
-<meta name="description" content="Herald privacy policy. How we collect, use, and protect your information.">
+<meta name="description" content="How Herald treats personal memory, early access email, and your privacy.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -13,14 +13,13 @@
 
   :root {
     --bg: #08080e;
-    --bg2: #0f0f1a;
     --amber: #e8a020;
-    --text: #f0ede8;
-    --text-muted: rgba(240, 237, 232, 0.6);
-    --text-dim: rgba(240, 237, 232, 0.35);
-    --border: rgba(240, 237, 232, 0.08);
+    --text: #f3f0ea;
+    --text-muted: rgba(243, 240, 234, 0.82);
+    --text-dim: rgba(243, 240, 234, 0.62);
+    --border: rgba(243, 240, 234, 0.12);
     --warning-bg: rgba(232, 160, 32, 0.07);
-    --warning-border: rgba(232, 160, 32, 0.25);
+    --warning-border: rgba(232, 160, 32, 0.28);
   }
 
   html, body {
@@ -32,170 +31,152 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── Nav ── */
+  a { color: var(--amber); text-decoration: none; }
+  a:hover, a:focus-visible { text-decoration: underline; }
+
   nav {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: rgba(8,8,14,0.92);
+    background: rgba(8,8,14,0.94);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
   .nav-brand {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 300;
+    color: var(--text-dim);
+    font-weight: 400;
     text-decoration: none;
   }
   .nav-brand span { color: var(--amber); }
   .nav-back {
-    font-size: 0.78rem;
+    font-size: 0.95rem;
     color: var(--text-dim);
     text-decoration: none;
-    letter-spacing: 0.05em;
-    transition: color 0.2s;
   }
-  .nav-back:hover { color: var(--text-muted); }
+  .nav-back:hover, .nav-back:focus-visible { color: var(--text); }
 
-  /* ── Layout ── */
   .page {
-    max-width: 720px;
+    max-width: 42rem;
     margin: 0 auto;
-    padding: 4rem 2rem 6rem;
+    padding: 3.5rem 1.5rem 5.5rem;
   }
 
-  /* ── Header ── */
   .doc-header {
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.75rem;
     border-bottom: 1px solid var(--border);
   }
   .doc-eyebrow {
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--amber);
-    font-weight: 400;
+    font-weight: 500;
     margin-bottom: 1rem;
   }
   .doc-title {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 300;
-    font-size: 3rem;
+    font-size: clamp(2.2rem, 6vw, 3.1rem);
     line-height: 1.1;
-    color: var(--text);
     margin-bottom: 1rem;
   }
   .doc-meta {
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     color: var(--text-dim);
-    letter-spacing: 0.03em;
   }
 
-  /* ── Disclaimer boxes ── */
   .disclaimer {
     background: var(--warning-bg);
     border: 1px solid var(--warning-border);
     border-left: 3px solid var(--amber);
-    border-radius: 2px;
-    padding: 1.25rem 1.5rem;
-    margin: 2rem 0;
+    padding: 1.2rem 1.35rem;
+    margin: 1.75rem 0;
   }
   .disclaimer-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.15em;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--amber);
     font-weight: 500;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.45rem;
   }
   .disclaimer p {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--text-muted);
     line-height: 1.7;
     margin: 0;
   }
 
-  /* ── Sections ── */
-  .section {
-    margin-bottom: 2.5rem;
-  }
   h2 {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
+    font-size: 0.92rem;
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.75rem;
-    padding-top: 2rem;
+    color: var(--text);
+    margin: 2.4rem 0 0.75rem;
   }
   p {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     color: var(--text-muted);
     margin-bottom: 1rem;
     line-height: 1.8;
   }
   ul {
-    margin: 0.5rem 0 1rem 0;
-    padding-left: 1.25rem;
+    margin: 0.4rem 0 1.1rem;
+    padding-left: 1.2rem;
     list-style: none;
   }
   ul li {
     position: relative;
-    font-size: 0.92rem;
+    font-size: 1.02rem;
     color: var(--text-muted);
     line-height: 1.75;
-    margin-bottom: 0.4rem;
-    padding-left: 0.75rem;
+    margin-bottom: 0.45rem;
+    padding-left: 0.85rem;
   }
   ul li::before {
     content: '';
     position: absolute;
-    left: -0.25rem;
-    top: 0.7em;
-    width: 4px;
+    left: -0.2rem;
+    top: 0.75em;
+    width: 5px;
     height: 1px;
     background: var(--amber);
-    opacity: 0.6;
   }
 
-  /* ── Divider ── */
   hr {
     border: none;
     border-top: 1px solid var(--border);
-    margin: 2rem 0;
+    margin: 2.2rem 0;
   }
 
-  /* ── Footer ── */
   footer {
     border-top: 1px solid var(--border);
-    padding: 1.5rem 2rem;
+    padding: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 2rem;
+    gap: 1.75rem;
     flex-wrap: wrap;
   }
   footer a, footer span {
-    font-size: 0.75rem;
+    font-size: 0.95rem;
     color: var(--text-dim);
     text-decoration: none;
-    letter-spacing: 0.05em;
-    transition: color 0.2s;
   }
-  footer a:hover { color: var(--text-muted); }
+  footer a:hover, footer a:focus-visible { color: var(--text); }
 
   @media (max-width: 600px) {
-    .page { padding: 2.5rem 1.25rem 4rem; }
-    .doc-title { font-size: 2.2rem; }
-    nav { padding: 0.85rem 1.25rem; }
+    .page { padding: 2.4rem 1.25rem 4rem; }
+    nav { padding: 0.9rem 1.25rem; }
   }
 </style>
 </head>
@@ -203,129 +184,73 @@
 
 <nav>
   <a href="/" class="nav-brand">Herald<span>.</span></a>
-  <a href="/" class="nav-back">← Back</a>
+  <a href="/" class="nav-back">Back</a>
 </nav>
 
 <div class="page">
-
   <div class="doc-header">
     <p class="doc-eyebrow">Legal</p>
     <h1 class="doc-title">Privacy Policy</h1>
-    <p class="doc-meta">Effective date: May 18, 2026 &nbsp;·&nbsp; Apex Empire AI, LLC</p>
+    <p class="doc-meta">Effective date: August 29, 2026 · Apex Empire AI, LLC</p>
   </div>
 
-  <p>This Privacy Policy describes how Herald, operated by Apex Empire AI ("we," "us," or "our"), collects, uses, and protects information you provide when using the Herald application and related services. By using Herald, you agree to the practices described in this policy.</p>
+  <p>This policy describes how Herald, operated by Apex Empire AI (“we,” “us,” or “our”), treats information in connection with the Herald website and early access list, and how we think about personal memory in the Herald product. Herald is an early-access Personal AI. Practices may change as the product develops. We will update this page when they do.</p>
 
-  <!-- ── MEDICAL DISCLAIMER ── -->
   <div class="disclaimer">
     <p class="disclaimer-label">Important — Not medical advice</p>
-    <p>Herald is a personal AI companion, not a medical device, healthcare provider, or licensed medical professional. Herald does not diagnose, treat, cure, or prevent any medical condition or disease. Any health-related information Herald discusses is based solely on what you have shared conversationally — it is not a medical record, clinical assessment, or substitute for professional medical advice. Nothing Herald says should be relied upon as medical advice. Always consult a qualified healthcare provider for any medical concerns. If you are experiencing a medical emergency, call 911 immediately.</p>
+    <p>Herald is a personal companion, not a medical device, healthcare provider, or licensed medical professional. Herald does not diagnose, treat, cure, or prevent any medical condition. Nothing Herald says should be relied on as medical advice. Always consult a qualified healthcare provider for medical concerns. If you are experiencing a medical emergency, call 911 immediately.</p>
   </div>
 
-  <!-- ── FINANCIAL DISCLAIMER ── -->
   <div class="disclaimer">
     <p class="disclaimer-label">Important — Not financial advice</p>
-    <p>Herald is not a registered investment advisor, broker-dealer, financial planner, or financial institution. Herald does not provide investment advice, financial planning, tax advice, or recommendations to buy or sell any security, asset, or financial product. Any financial information discussed within Herald is for general informational purposes only based on what you have shared, and does not constitute professional financial advice. Nothing Herald says should be relied upon as a basis for any financial or investment decision. Always consult a qualified financial professional before making financial decisions.</p>
+    <p>Herald is not a registered investment advisor, broker-dealer, financial planner, or financial institution. Herald does not provide investment, tax, or financial advice, and does not recommend buying or selling any security or product. Nothing Herald says should be used as the basis for a financial decision. Consult a qualified professional before making financial decisions.</p>
   </div>
 
-  <div class="section">
-    <h2>1. Information we collect</h2>
-    <p>Herald collects information you provide directly through conversation and onboarding:</p>
-    <ul>
-      <li>Your name, location, and email address (if provided)</li>
-      <li>Preferences and interests you share in conversation</li>
-      <li>Life events, appointments, and reminders you ask Herald to track</li>
-      <li>Health-related topics you mention conversationally (not stored as medical records)</li>
-      <li>Financial topics you mention conversationally (not stored as financial records)</li>
-      <li>Device location data (GPS coordinates, used to provide local context)</li>
-      <li>Usage data including messages sent and features used</li>
-    </ul>
-    <p>We do not collect payment card information, government ID numbers, or Social Security numbers.</p>
-  </div>
+  <h2>1. What Herald is trying to be</h2>
+  <p>Herald is a Personal AI you talk to. Conversation is the experience. Memory is the product: the meaningful things about your life, so you do not have to begin again every time you speak.</p>
+  <p>Personal memories belong on your device. That is the direction of the product. We do not claim, in this policy, a specific technical guarantee we cannot show you from this website. We will not describe your life as a cloud profile, and we will not use it as an advertising asset.</p>
+  <p>Information from the wider world may be used when it is helpful. It should not become the authority over your personal life.</p>
 
-  <div class="section">
-    <h2>2. How we use your information</h2>
-    <p>We use the information we collect to:</p>
-    <ul>
-      <li>Provide and personalize the Herald experience</li>
-      <li>Remember context across conversations so Herald can help you more effectively</li>
-      <li>Send proactive reminders, briefings, and alerts you have requested</li>
-      <li>Improve and develop Herald's features and capabilities</li>
-      <li>Communicate with you about your account and Herald updates</li>
-      <li>Comply with legal obligations</li>
-    </ul>
-  </div>
+  <h2>2. The early access list</h2>
+  <p>If you enter your email on apexempire.ai, we keep that address so we can invite you as Herald is built and tested. We may also keep a time and a simple note that it came from the website.</p>
+  <p>That list is separate from Herald’s personal memory. Joining it does not mean we hold the story of your life. It means we can reach you about early access.</p>
+  <p>We do not sell the early access list. We do not use it to advertise other people’s products to you.</p>
 
-  <div class="section">
-    <h2>3. What Herald stores — and what it does not</h2>
-    <p>Herald stores conversational context — things you tell us — to make the experience personal and useful. This is different from clinical or financial records.</p>
-    <ul>
-      <li>Herald does <strong>not</strong> store your medical records or act as a healthcare records system</li>
-      <li>Herald does <strong>not</strong> store financial account numbers, brokerage credentials, or tax records</li>
-      <li>Herald does <strong>not</strong> access your bank accounts, investment accounts, or credit information</li>
-      <li>Herald does <strong>not</strong> share your personal information with advertisers</li>
-      <li>Herald does <strong>not</strong> sell your data. Ever.</li>
-    </ul>
-    <p>Conversational data (what you share with Herald) is stored securely on servers in the United States. It is used only to power your Herald experience.</p>
-  </div>
+  <h2>3. What we do not want this to be</h2>
+  <ul>
+    <li>We do not sell your information.</li>
+    <li>We do not use your personal life to advertise.</li>
+    <li>We do not ask for payment card numbers, government ID, or Social Security numbers on this website.</li>
+    <li>Herald is not a medical chart, and not a financial account.</li>
+  </ul>
 
-  <div class="section">
-    <h2>4. Location data</h2>
-    <p>With your permission, Herald accesses your device's GPS location to provide local context such as weather, nearby recommendations, and location-aware reminders. Location data is used in real time and stored only as a general city-level label to improve future responses. We do not track your precise location history or share your location with third parties.</p>
-  </div>
+  <h2>4. When we may share</h2>
+  <p>We may share information only in narrow cases: with a service that helps us operate Herald (for example, sending an early-access email), under an obligation to keep it protected; when the law requires it; to protect someone’s safety in an emergency; or if Herald is part of a merger or sale, in which case we will notify you of a material change.</p>
 
-  <div class="section">
-    <h2>5. Data sharing</h2>
-    <p>We do not sell, rent, or trade your personal information. We may share information only in the following limited circumstances:</p>
-    <ul>
-      <li>With service providers who assist in operating Herald (such as hosting, email delivery, and error monitoring), under confidentiality obligations</li>
-      <li>When required by law, court order, or government authority</li>
-      <li>To protect the safety of any person in an emergency situation</li>
-      <li>In connection with a merger, acquisition, or sale of Herald — you will be notified of any such change</li>
-    </ul>
-  </div>
+  <h2>5. How long we keep the early access email</h2>
+  <p>We keep your email while the early access list is in use, or until you ask us to remove it. To be taken off the list, or to ask what we hold, email <a href="mailto:herald@apexempire.ai">herald@apexempire.ai</a>. We will work through that request within 30 days.</p>
 
-  <div class="section">
-    <h2>6. Data retention and deletion</h2>
-    <p>We retain your data for as long as your account is active or as needed to provide services. You may request deletion of your account and all associated data at any time by contacting us at <a href="mailto:herald@apexempire.ai" style="color: var(--amber); text-decoration: none;">herald@apexempire.ai</a>. We will process deletion requests within 30 days.</p>
-  </div>
+  <h2>6. Children</h2>
+  <p>Herald is not intended for anyone under 18. We do not knowingly collect personal information from minors. If you believe a minor has given us information, contact us and we will delete it.</p>
 
-  <div class="section">
-    <h2>7. Security</h2>
-    <p>We use industry-standard security measures to protect your information, including encrypted communications (HTTPS), access controls, and secure server infrastructure. No method of transmission or storage is 100% secure. We will notify you promptly in the event of a data breach affecting your personal information.</p>
-  </div>
+  <h2>7. Your choices</h2>
+  <p>You may ask us to correct or delete the email you gave us, or to tell you what we hold from the early access list. Depending on where you live, you may have additional rights. Email <a href="mailto:herald@apexempire.ai">herald@apexempire.ai</a>.</p>
 
-  <div class="section">
-    <h2>8. Children's privacy</h2>
-    <p>Herald is not intended for use by anyone under the age of 18. We do not knowingly collect personal information from minors. If you believe a minor has provided us with personal information, please contact us and we will delete it promptly.</p>
-  </div>
+  <h2>8. Changes</h2>
+  <p>We may update this policy. Material changes will be posted at apexempire.ai/privacy, and the date at the top of this page will change. Where it is appropriate, we will also email people on the early access list.</p>
 
-  <div class="section">
-    <h2>9. Your rights</h2>
-    <p>Depending on your location, you may have rights regarding your personal information, including the right to access, correct, or delete your data, and the right to object to or restrict certain uses. To exercise any of these rights, contact us at <a href="mailto:herald@apexempire.ai" style="color: var(--amber); text-decoration: none;">herald@apexempire.ai</a>.</p>
-  </div>
-
-  <div class="section">
-    <h2>10. Changes to this policy</h2>
-    <p>We may update this Privacy Policy from time to time. We will notify you of material changes by posting the updated policy at apexempire.ai/privacy and, where appropriate, by email. The effective date at the top of this page will reflect the date of the most recent update. Continued use of Herald after changes are posted constitutes your acceptance of the updated policy.</p>
-  </div>
-
-  <div class="section">
-    <h2>11. Contact</h2>
-    <p>Questions, concerns, or requests regarding this Privacy Policy or your data:</p>
-    <p>
-      Apex Empire AI<br>
-      <a href="mailto:herald@apexempire.ai" style="color: var(--amber); text-decoration: none;">herald@apexempire.ai</a>
-    </p>
-  </div>
+  <h2>9. Contact</h2>
+  <p>
+    Apex Empire AI, LLC<br>
+    <a href="mailto:herald@apexempire.ai">herald@apexempire.ai</a>
+  </p>
 
   <hr>
-  <p style="font-size: 0.8rem; color: var(--text-dim);">This policy was last updated May 18, 2026. Herald is an early-access product. Features and data practices may evolve as the product develops. We are committed to keeping this policy current and accurate.</p>
-
+  <p style="font-size: 0.95rem; color: var(--text-dim);">This policy was last updated August 29, 2026. Herald is an early-access product. We will keep this page aligned with how Herald actually works, rather than with plans we have not yet made real.</p>
 </div>
 
 <footer>
-  <a href="/">← Herald</a>
+  <a href="/">Herald</a>
   <span>© 2026 Apex Empire AI</span>
   <a href="mailto:herald@apexempire.ai">Contact</a>
 </footer>
