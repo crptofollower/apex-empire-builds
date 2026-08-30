@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>ApexEmpire Operations — Growth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #08080e;
+    --bg2: #12121c;
+    --amber: #e8a020;
+    --text: #f3f0ea;
+    --text-dim: rgba(243, 240, 234, 0.72);
+    --border: rgba(243, 240, 234, 0.16);
+  }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+  .page { max-width: 72rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  .eyebrow {
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-bottom: 0.6rem;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    margin-bottom: 0.4rem;
+  }
+  .sub { color: var(--text-dim); margin-bottom: 1.8rem; }
+  .lock {
+    max-width: 22rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  input, button {
+    font: inherit;
+    border-radius: 0.4rem;
+    border: 1px solid var(--border);
+    padding: 0.7rem 0.85rem;
+  }
+  input {
+    background: var(--bg2);
+    color: var(--text);
+  }
+  button {
+    background: var(--amber);
+    color: #14110a;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+  }
+  button:disabled { opacity: 0.55; cursor: default; }
+  .error { color: #f0a0a0; min-height: 1.2rem; font-size: 0.9rem; }
+  .hidden { display: none; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0.8rem;
+    margin: 1.4rem 0 2rem;
+  }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1rem 1.1rem;
+  }
+  .card .label { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 0.35rem; }
+  .card .value { font-size: 1.6rem; }
+  h2 { font-size: 1.05rem; font-weight: 500; margin: 1.6rem 0 0.7rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.55rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-dim); font-weight: 400; }
+  .toolbar { margin: 0.4rem 0 1.2rem; }
+  .ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <p class="eyebrow">ApexEmpire Operations</p>
+    <h1>Growth</h1>
+    <p class="sub">Waitlist signups and first-touch referral attribution. Founder-only.</p>
+
+    <div id="lock" class="lock">
+      <label for="secret">Founder access</label>
+      <input id="secret" type="password" autocomplete="current-password" placeholder="Access secret">
+      <button type="button" id="unlock">Open dashboard</button>
+      <p class="error" id="lock-error"></p>
+    </div>
+
+    <div id="dash" class="hidden">
+      <div class="toolbar">
+        <button type="button" class="ghost" id="export-csv">Export CSV</button>
+        <button type="button" class="ghost" id="lock-again">Lock</button>
+      </div>
+      <p class="error" id="dash-error"></p>
+      <div class="stats">
+        <div class="card"><div class="label">Waitlist Total</div><div class="value" id="stat-total">—</div></div>
+        <div class="card"><div class="label">New This Week</div><div class="value" id="stat-week">—</div></div>
+        <div class="card"><div class="label">Organic</div><div class="value" id="stat-organic">—</div></div>
+        <div class="card"><div class="label">Referred</div><div class="value" id="stat-referred">—</div></div>
+      </div>
+      <h2>Top Referral Sources</h2>
+      <div id="sources"></div>
+      <h2>Recent Signups</h2>
+      <div id="signups"></div>
+    </div>
+  </div>
+<script>
+  const API = 'https://web-production-b4083.up.railway.app';
+  const STORAGE_KEY = 'herald_growth_dashboard_token';
+
+  function headers() {
+    const secret = sessionStorage.getItem(STORAGE_KEY) || '';
+    return { 'Authorization': 'Bearer ' + secret };
+  }
+
+  async function loadDashboard() {
+    const dashError = document.getElementById('dash-error');
+    dashError.textContent = '';
+    const summaryRes = await fetch(API + '/growth/summary', { headers: headers() });
+    const signupsRes = await fetch(API + '/growth/signups', { headers: headers() });
+    if (summaryRes.status === 401 || signupsRes.status === 401) {
+      throw new Error('unauthorized');
+    }
+    if (!summaryRes.ok || !signupsRes.ok) {
+      throw new Error('server');
+    }
+    const summary = await summaryRes.json();
+    const signups = await signupsRes.json();
+    document.getElementById('stat-total').textContent = summary.total;
+    document.getElementById('stat-week').textContent = summary.new_last_7_days;
+    document.getElementById('stat-organic').textContent = summary.organic;
+    document.getElementById('stat-referred').textContent = summary.referred;
+    renderSources(summary);
+    renderSignups(signups.entries || []);
+    document.getElementById('lock').classList.add('hidden');
+    document.getElementById('dash').classList.remove('hidden');
+  }
+
+  function renderSources(summary) {
+    const codes = summary.by_referral_code || [];
+    const partners = summary.by_partner_campaign || [];
+    let html = '';
+    if (!codes.length && !partners.length) {
+      html = '<p class="sub">No referred signups yet.</p>';
+    } else {
+      if (codes.length) {
+        html += '<table><thead><tr><th>Referral code</th><th>Signups</th></tr></thead><tbody>';
+        codes.forEach(function (row) {
+          html += '<tr><td>' + escapeHtml(row.referral_code) + '</td><td>' + row.count + '</td></tr>';
+        });
+        html += '</tbody></table>';
+      }
+      if (partners.length) {
+        html += '<table style="margin-top:1rem"><thead><tr><th>Partner</th><th>Campaign</th><th>Signups</th></tr></thead><tbody>';
+        partners.forEach(function (row) {
+          html += '<tr><td>' + escapeHtml(row.partner || '') + '</td><td>' + escapeHtml(row.campaign || '') + '</td><td>' + row.count + '</td></tr>';
+        });
+        html += '</tbody></table>';
+      }
+    }
+    document.getElementById('sources').innerHTML = html;
+  }
+
+  function renderSignups(entries) {
+    if (!entries.length) {
+      document.getElementById('signups').innerHTML = '<p class="sub">No waitlist entries yet.</p>';
+      return;
+    }
+    let html = '<table><thead><tr><th>Signup date</th><th>Email</th><th>Source</th><th>Referral code</th><th>Partner</th><th>Campaign</th></tr></thead><tbody>';
+    entries.forEach(function (row) {
+      html += '<tr>'
+        + '<td>' + escapeHtml(row.created_at || '') + '</td>'
+        + '<td>' + escapeHtml(row.email || '') + '</td>'
+        + '<td>' + escapeHtml(row.source || '') + '</td>'
+        + '<td>' + escapeHtml(row.referral_code || '') + '</td>'
+        + '<td>' + escapeHtml(row.partner || '') + '</td>'
+        + '<td>' + escapeHtml(row.campaign || '') + '</td>'
+        + '</tr>';
+    });
+    html += '</tbody></table>';
+    document.getElementById('signups').innerHTML = html;
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function showLock(message) {
+    sessionStorage.removeItem(STORAGE_KEY);
+    document.getElementById('dash').classList.add('hidden');
+    document.getElementById('lock').classList.remove('hidden');
+    document.getElementById('lock-error').textContent = message || '';
+  }
+
+  document.getElementById('unlock').addEventListener('click', async function () {
+    const secret = document.getElementById('secret').value.trim();
+    const err = document.getElementById('lock-error');
+    err.textContent = '';
+    if (!secret) {
+      err.textContent = 'Enter the founder access secret.';
+      return;
+    }
+    sessionStorage.setItem(STORAGE_KEY, secret);
+    try {
+      await loadDashboard();
+    } catch (e) {
+      showLock(e.message === 'unauthorized' ? 'Access denied.' : 'Could not load growth data.');
+    }
+  });
+
+  document.getElementById('lock-again').addEventListener('click', function () {
+    showLock('');
+    document.getElementById('secret').value = '';
+  });
+
+  document.getElementById('export-csv').addEventListener('click', async function () {
+    const dashError = document.getElementById('dash-error');
+    dashError.textContent = '';
+    try {
+      const res = await fetch(API + '/growth/export.csv', { headers: headers() });
+      if (res.status === 401) {
+        showLock('Access denied.');
+        return;
+      }
+      if (!res.ok) throw new Error('server');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'herald-growth-waitlist.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      dashError.textContent = 'CSV export failed.';
+    }
+  });
+
+  if (sessionStorage.getItem(STORAGE_KEY)) {
+    loadDashboard().catch(function (e) {
+      showLock(e.message === 'unauthorized' ? 'Access denied.' : 'Could not load growth data.');
+    });
+  }
+</script>
+</body>
+</html>
