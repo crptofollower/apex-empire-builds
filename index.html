@@ -536,10 +536,68 @@
 
 <script>
   const WAITLIST_URL = 'https://web-production-b4083.up.railway.app/waitlist';
+  const REF_STORAGE_KEY = 'herald_referral_code';
+  const VISITOR_STORAGE_KEY = 'herald_visitor_id';
+  const REF_CODE_RE = /^[A-Za-z0-9_-]{1,64}$/;
 
   function isValidEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
   }
+
+  function normalizeReferralCode(raw) {
+    if (typeof raw !== 'string') return '';
+    const code = raw.trim();
+    if (!REF_CODE_RE.test(code)) return '';
+    return code;
+  }
+
+  function readStored(key) {
+    try {
+      return window.localStorage.getItem(key) || '';
+    } catch (err) {
+      return '';
+    }
+  }
+
+  function writeStored(key, value) {
+    try {
+      window.localStorage.setItem(key, value);
+    } catch (err) {}
+  }
+
+  function captureFirstTouchReferral() {
+    const params = new URLSearchParams(window.location.search);
+    const incoming = normalizeReferralCode(params.get('ref') || '');
+    const existing = normalizeReferralCode(readStored(REF_STORAGE_KEY));
+    if (existing) return existing;
+    if (incoming) {
+      writeStored(REF_STORAGE_KEY, incoming);
+      return incoming;
+    }
+    return '';
+  }
+
+  function getOrCreateVisitorId() {
+    const existing = readStored(VISITOR_STORAGE_KEY);
+    if (existing) return existing;
+    const created = (window.crypto && window.crypto.randomUUID)
+      ? window.crypto.randomUUID()
+      : '';
+    if (created) writeStored(VISITOR_STORAGE_KEY, created);
+    return created;
+  }
+
+  function waitlistPayload(email) {
+    const payload = { email: email };
+    const referralCode = captureFirstTouchReferral();
+    const visitorId = getOrCreateVisitorId();
+    if (referralCode) payload.referral_code = referralCode;
+    if (visitorId) payload.visitor_id = visitorId;
+    return payload;
+  }
+
+  captureFirstTouchReferral();
+  getOrCreateVisitorId();
 
   document.querySelectorAll('[data-waitlist]').forEach(function (form) {
     const input = form.querySelector('input[type="email"]');
@@ -574,7 +632,7 @@
         const res = await fetch(WAITLIST_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email })
+          body: JSON.stringify(waitlistPayload(email))
         });
 
         if (res.ok) {
